@@ -56,6 +56,13 @@ fun ComsApp(
             text = "Comms Test",
             style = MaterialTheme.typography.headlineMedium
         )
+        EntryWidget(
+            value = uiState.inString,
+            label = "Input",
+            onValueChange = {vModel.onInputChange(it)},
+            onClick = { vModel.onInputClick() },
+            keyboardOptions = KeyboardOptions.Default
+        )
         labelList.forEach { label ->
             EntryWidget(
                 value = uiState.varMap[label] ?: "N/A",
@@ -68,20 +75,8 @@ fun ComsApp(
                 ),
             )
         }
-//        EntryWidget(
-//            value = uiState.varMap[label] ?: "N/A",
-//            label = "Int",
-//            onValueChange = {vModel.onValueChange('A', it)},
-//            onClick = {vModel.onClick(it)},
-//            keyboardOptions = KeyboardOptions.Default.copy(
-//                keyboardType = KeyboardType.Number,
-//                imeAction = ImeAction.Done
-//            ),
-//        )
         Text(uiState.outString)
     }
-
-
 }
 
 @Composable
@@ -99,10 +94,6 @@ fun EntryWidget(
             label = { Text(label) },
             singleLine = true,
             keyboardOptions = keyboardOptions,
-//            keyboardOptions = KeyboardOptions.Default.copy(
-//                keyboardType = KeyboardType.Number,
-//                imeAction = ImeAction.Done
-//            ),
             onValueChange = {
                 onValueChange(it)
             },

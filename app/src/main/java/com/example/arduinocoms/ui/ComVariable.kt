@@ -10,6 +10,14 @@ class ComVariable(
         return "$matchChar$fieldData"
     }
 
+    fun parse(str: String) {
+        if (str[0] == matchChar) {
+            if(str.length > 1) {
+                update(str.substring(1))
+            }
+        }
+    }
+
     fun update(newVal: String) {
         fieldData = newVal
     }

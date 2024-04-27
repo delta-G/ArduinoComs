@@ -1,7 +1,7 @@
 package com.example.arduinocoms.ui
 
 data class ComsUIState(
-    val anInteger: Int = 1,
+    val inString: String = "",
     val outString: String = "output",
     val varMap: Map<String, String>
 )

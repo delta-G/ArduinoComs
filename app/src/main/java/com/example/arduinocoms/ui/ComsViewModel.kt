@@ -25,15 +25,20 @@ class ComsViewModel : ViewModel() {
         return comVars.keys
     }
 
-    fun onValueChange(label: String, newVal: String) {
-        // parse the value in the appropriate handler
-        comVars[label]?.update(newVal)
-        // update the ui state with the new values.
+    fun updateUIMap() {
+        // update the ui state with the new ComVariable values.
         _uiState.update { currentState ->
             currentState.copy(varMap = comVars.map { (k, v) ->
                 k to v.fieldData
             }.toMap())
         }
+    }
+
+    fun onValueChange(label: String, newVal: String) {
+        // parse the value in the appropriate handler
+        comVars[label]?.update(newVal)
+        // update the ui state with the new values.
+        updateUIMap()
     }
 
     fun onClick(label: String) {
@@ -44,6 +49,25 @@ class ComsViewModel : ViewModel() {
             _uiState.update { currentState ->
                 currentState.copy(outString = "<${cv.format()}>")
             }
+        }
+    }
+
+    fun onInputChange(inString: String) {
+        _uiState.update { currentState ->
+            currentState.copy(inString = inString)
+        }
+    }
+
+    fun onInputClick() {
+        val inString = _uiState.value.inString
+        if (inString[0] == '<' && inString[inString.lastIndex] == '>'){
+            // trim off the start and end markers and pass through the ComVariables
+            val inside = inString.substring(1, inString.lastIndex)
+            comVars.forEach { (_, comvar) ->
+                comvar.parse(inside)
+            }
+            // update the ui state
+            updateUIMap()
         }
     }
 }
