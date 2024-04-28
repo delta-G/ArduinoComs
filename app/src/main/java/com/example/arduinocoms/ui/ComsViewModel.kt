@@ -5,8 +5,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 
 class ComsViewModel : ViewModel() {
@@ -34,6 +32,13 @@ class ComsViewModel : ViewModel() {
         }
     }
 
+    fun send(com: ComVariable) {
+        // for right now just put in outString in UI state
+        _uiState.update { currentState ->
+            currentState.copy(outString = "<${com.format()}>")
+        }
+    }
+
     fun onValueChange(label: String, newVal: String) {
         // parse the value in the appropriate handler
         comVars[label]?.update(newVal)
@@ -45,10 +50,21 @@ class ComsViewModel : ViewModel() {
         // Find the matching CommVariable
         val cv: ComVariable? = comVars[label]
         // if there's a match, then send the command
-        if (cv != null) {
-            _uiState.update { currentState ->
-                currentState.copy(outString = "<${cv.format()}>")
+        cv?.let {send(it)}
+    }
+
+    fun onInput(inString: String) {
+        if (inString[0] == '<' && inString[inString.lastIndex] == '>'){
+            // trim off the start and end markers and pass through the ComVariables
+            val pattern = "<+([^<]+?)>".toRegex()
+            val matches = pattern.findAll(inString)
+            matches.forEach {
+                comVars.forEach { (_, comvar) ->
+                    comvar.parse(it.groups[1]?.value ?: "")
+                }
             }
+            // update the ui state
+            updateUIMap()
         }
     }
 
@@ -59,15 +75,6 @@ class ComsViewModel : ViewModel() {
     }
 
     fun onInputClick() {
-        val inString = _uiState.value.inString
-        if (inString[0] == '<' && inString[inString.lastIndex] == '>'){
-            // trim off the start and end markers and pass through the ComVariables
-            val inside = inString.substring(1, inString.lastIndex)
-            comVars.forEach { (_, comvar) ->
-                comvar.parse(inside)
-            }
-            // update the ui state
-            updateUIMap()
-        }
+        onInput(_uiState.value.inString)
     }
 }
