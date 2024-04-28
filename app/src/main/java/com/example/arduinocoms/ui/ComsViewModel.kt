@@ -23,8 +23,9 @@ class ComsViewModel : ViewModel() {
     val client = Client(address, port)
 
     private val comVars = mapOf(
-        "Alpha" to ComVariable('A'),
-        "Beta" to ComVariable('B'),
+        "Analog" to ComVariable('A'),
+        "OnTime" to ComVariable('T'),
+        "OffTime" to ComVariable('t'),
     )
 
     private val _uiState = MutableStateFlow(ComsUIState(varMap = comVars.map { (k, v) ->
@@ -61,9 +62,9 @@ class ComsViewModel : ViewModel() {
     }
 
     fun onConnectButtonClick() {
-        if(!client.isConnected()) {
+//        if(!client.isConnected()) {
             startClient()
-        }
+//        }
     }
 
     fun getLabels(): Set<String> {
@@ -105,7 +106,7 @@ class ComsViewModel : ViewModel() {
     }
 
     fun onInput(inString: String) {
-        if (inString[0] == '<' && inString[inString.lastIndex] == '>'){
+//        if (inString[0] == '<' && inString[inString.lastIndex] == '>'){
             // trim off the start and end markers and pass through the ComVariables
             val pattern = "<+([^<]+?)>".toRegex()
             val matches = pattern.findAll(inString)
@@ -116,7 +117,7 @@ class ComsViewModel : ViewModel() {
             }
             // update the ui state
             updateUIMap()
-        }
+//        }
     }
 
     fun onInputChange(inString: String) {
