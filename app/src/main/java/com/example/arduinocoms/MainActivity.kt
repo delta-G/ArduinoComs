@@ -56,6 +56,13 @@ fun ComsApp(
             text = "Comms Test",
             style = MaterialTheme.typography.headlineMedium
         )
+        Button(
+            onClick = {
+                vModel.onConnectButtonClick()
+            }
+        ) {
+            Text(uiState.isConnected)
+        }
         EntryWidget(
             value = uiState.inString,
             label = "Input",
